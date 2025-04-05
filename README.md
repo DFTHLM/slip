@@ -12,7 +12,6 @@
 | `OP_DUMP` | 4     | Writes top of stack to stdout                |
 | `OP_INT`  | 5     | Modifies code: pops `op` then `line`         |
 | `OP_PUSH` | 6     | Pushes argument (only instruction with args) |
-|-----------|-------|----------------------------------------------|
 
 ### Example: Infinite 'A' Printer
 
