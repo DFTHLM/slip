@@ -23,6 +23,10 @@ PUSH 65   ; [3] ASCII 'A'
 DUMP      ; [4] Print
 INT       ; [5] Overwrites line 0 with NOP, jumps there
 ```
+(Currently, to make a file you need to edit the program variable in slip.c - array of Instruction {count, OpCode, arg} - and recompile)
+
+                                                                                                     ^
+                                                                                                     for future optimization (amount of times to run the instruction)
 ## Compilation:
 Link slip.c and stack.c, compile and run:
 ```bash
@@ -33,6 +37,7 @@ gcc slip.c stack.c -o slip
 ```
 
 ## Roadmap
+- [ ] Parse program from file
 - [ ] Dynamic program expansion for `INT`
 - [ ] Unified I/O system (shared buffer for READ/DUMP)
 - [ ] Better error handling
