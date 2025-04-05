@@ -16,10 +16,15 @@
 ### Example: Infinite 'A' Printer
 
 NOP       ; [0] Placeholder
+
 PUSH -5   ; [1] INT jump offset
+
 PUSH 0    ; [2] Opcode to write (NOP)
+
 PUSH 65   ; [3] ASCII 'A'
+
 DUMP      ; [4] Print
+
 INT       ; [5] Overwrites line 0 with NOP, jumps there
 
 ## Compilation:
