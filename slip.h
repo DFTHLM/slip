@@ -10,6 +10,7 @@ typedef enum {
     OP_SUB,
     OP_READ,
     OP_DUMP,
+    OP_WRITE,
     OP_INT,
     OP_PUSH,
     COUNT
@@ -21,6 +22,7 @@ static const char* OPCODE_NAMES[] = {
     "OP_SUB",
     "OP_READ",
     "OP_DUMP",
+    "OP_WRITE",
     "OP_INT",
     "OP_PUSH"
 };

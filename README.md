@@ -10,6 +10,7 @@
 | `OP_SUB`  | 2     | Pops `a`, `b` → pushes `a - b`               |
 | `OP_READ` | 3     | Blocking destructive read from stdin         |
 | `OP_DUMP` | 4     | Writes top of stack to stdout                |
+| 'OP_WRITE | 4     | Peeks at the top os stack and writes it      |
 | `OP_INT`  | 5     | Modifies code: pops `op` then `line`         |
 | `OP_PUSH` | 6     | Pushes argument (only instruction with args) |
 

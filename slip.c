@@ -17,11 +17,8 @@ Instruction* pc;
 
 int8_t read_input()
 {
-    char c;
-    if (read(STDIN_FILENO, &c, 1) == 1) {
-        return (int8_t)c;
-    }
-    return EOF;
+    printf("\33[2K\r");
+    return 65;
 }
 
 int8_t execute_instruction(Instruction *inst, int line) 
@@ -99,7 +96,20 @@ int8_t execute_instruction(Instruction *inst, int line)
                 }
 
                 int8_t a = pop(&stack);
-                printf("%c\n", a);
+                printf("%d", a);
+            }
+            return line + 1;
+        
+        case OP_WRITE:
+            for (int r = 0; r < inst->count ; r++){
+                if (is_empty(&stack)) {
+                    printf("Stack underflow in WRITE\n");
+                    exit(1);
+                }
+
+                int8_t a = peek(&stack);
+
+                printf("%d", a);
             }
             return line + 1;
 
@@ -124,10 +134,8 @@ int8_t execute_instruction(Instruction *inst, int line)
                     printf("Stack underflow in INT\n");
                     exit(1);
                 }
-                printf("INT triggered OpCode %d, line %d\n", x, y);
                 
                 int target_line = line + y;
-                printf("Jumping to line %d\n", target_line);
 
                 if (target_line >= 0 && target_line < program_size) {
                     line = target_line;
@@ -174,6 +182,7 @@ void parse(char code[])
 
 int main() 
 {
+    int debug = 0; //set to 1 to enable debug messages
     init(&stack);
 
     int line = 0;
@@ -184,15 +193,18 @@ int main()
     }
 
     while (line < program_size) {
-        printf("Executing line %d ", line);
-        const char *op_name = OPCODE_NAMES[pc[line].op];
-        printf("program size: %d\n", program_size);
-        printf("Operation: %d, Count: %s (%d), Arg: %d\n", pc[line].op, op_name, pc[line].count, pc[line].arg);
+        if (debug) {
+            printf("Executing line %d ", line);
+            const char *op_name = OPCODE_NAMES[pc[line].op];
+            printf("program size: %d\n", program_size);
+            printf("Operation: %d, Count: %s (%d), Arg: %d\n", pc[line].op, op_name, pc[line].count, pc[line].arg);
+        }
         line = execute_instruction(&pc[line], line);
-        printf("Next line: %d\n", line);
-        if (!is_empty(&stack)) {
-            int8_t top = peek(&stack);
-            printf("Top of stack: %d\n", top);
+        if (debug) {
+            if (!is_empty(&stack)) {
+                int8_t top = peek(&stack);
+                printf("Top of stack: %d\n", top);
+            }
         }
     }
 
