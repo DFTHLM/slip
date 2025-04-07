@@ -38,6 +38,6 @@ gcc slip.c stack.c -o slip
 ## Roadmap
 - [ ] Parse program from file
 - [ ] Dynamic program expansion for `INT`
-- [x] Unified I/O system (shared buffer for READ/DUMP)
+- [x] Unified I/O system (shared buffer for READ/WRITE)
 - [ ] Better error handling
 - [ ] Example programs gallery
