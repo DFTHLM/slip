@@ -11,18 +11,18 @@
 | `OP_READ` | 3     | Blocking destructive read from stdin         |
 | `OP_WRITE`| 4     | Peeks at the top of stack and writes it      |
 | `OP_INT`  | 5     | Modifies code: pops `op` then `line`         |
-| `OP_POP`  | 5     | Destroys the top of the stack                |
-| `OP_PUSH` | 6     | Pushes argument (only instruction with args) |
+| `OP_POP`  | 6     | Destroys the top of the stack                |
+| `OP_PUSH` | 7     | Pushes argument (only instruction with args) |
 
 ### Example: Infinite 'A' Printer
 
 ```
-NOP       ; [0] Placeholder
+NOP       ; [0] No-op (wastes a cycle)
 PUSH -5   ; [1] INT jump offset (relative line jump from INT)
 PUSH 0    ; [2] Opcode to write (NOP)
 PUSH 65   ; [3] ASCII 'A'
-DUMP      ; [4] Print
-INT       ; [5] Overwrites line 5 lines above with NOP, jumps there
+WRITE     ; [4] Print
+INT       ; [5] Overwrites the line 5 lines above with NOP, jumps there
 ```
 (Currently, to make a file you need to edit the program variable in slip.c - array of Instruction {count, OpCode, arg} - and recompile)
 
@@ -31,7 +31,7 @@ Link slip.c and stack.c, compile and run:
 ```bash
 git clone https://github.com/DFTHLM/slip.git
 cd slip
-gcc slip.c stack.c -o slip
+gcc slip.c stack.c unified_io.c -o slip
 ./slip
 ```
 
