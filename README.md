@@ -18,13 +18,14 @@
 
 ```
 NOP       ; [0] No-op (wastes a cycle)
-PUSH -5   ; [1] INT jump offset (relative line jump from INT)
+PUSH -6   ; [1] INT jump offset (relative line jump from INT)
 PUSH 0    ; [2] Opcode to write (NOP)
 PUSH 65   ; [3] ASCII 'A'
 WRITE     ; [4] Print
-INT       ; [5] Overwrites the line 5 lines above with NOP, jumps there
+POP       ; [5] Discard the top of the stack (it will overflow sooner than the I/O buffer)
+INT       ; [5] Overwrites the line 6 lines above with NOP, jumps there
 ```
-(Currently, to make a file you need to edit the program variable in slip.c - array of Instruction {count, OpCode, arg} - and recompile)
+Currently, to make a program you need to edit the *program* variable in slip.c - array of Instruction {count, OpCode, arg} - and recompile
 
 ## Compilation:
 Link slip.c, stack.c and unified_io.c, compile and run:
