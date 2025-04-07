@@ -1,8 +1,7 @@
 #include "stack.h"
-#include <stdio.h>
-#include <stdlib.h>
 
-void init(Stack *stack) {
+void init(Stack *stack, int size) {
+    stack->arr = (int8_t *)malloc(size * sizeof(int8_t));
     stack->top = -1;
 }
 

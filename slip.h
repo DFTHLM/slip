@@ -2,16 +2,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "stack.h"
+#include "unified_io.h"
 
 typedef enum {
     OP_NOP,
     OP_ADD,
     OP_SUB,
     OP_READ,
-    OP_DUMP,
     OP_WRITE,
     OP_INT,
+    OP_POP,
     OP_PUSH,
     COUNT
 } OpCode;

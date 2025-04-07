@@ -1,14 +1,15 @@
 #include "slip.h"
 
-int *stack_pointer;
 Stack stack;
+IOBuffer io_buffer;
 
 Instruction program[] = {
     {1, OP_NOP, 0},
     {1, OP_PUSH, -5},
     {1, OP_PUSH, 0},
-    {1, OP_READ, 0},
-    {1, OP_DUMP, 0},
+    {1, OP_PUSH, 65},
+    {1, OP_WRITE, 0},
+    {1, OP_POP, 0},
     {1, OP_INT, 0}
 };
 
@@ -77,7 +78,7 @@ int8_t execute_instruction(Instruction *inst, int line)
 
         case OP_READ:
             for (int r = 0; r < inst->count ; r++){
-                int8_t a = read_input();
+                int8_t a = io_read(&io_buffer);
 
                 if (a == EOF) {
                     printf("Input error\n");
@@ -88,18 +89,6 @@ int8_t execute_instruction(Instruction *inst, int line)
             }
             return line + 1;
 
-        case OP_DUMP:
-            for (int r = 0; r < inst->count ; r++){
-                if (is_empty(&stack)) {
-                    printf("Stack underflow in DUMP\n");
-                    exit(1);
-                }
-
-                int8_t a = pop(&stack);
-                printf("%d", a);
-            }
-            return line + 1;
-        
         case OP_WRITE:
             for (int r = 0; r < inst->count ; r++){
                 if (is_empty(&stack)) {
@@ -109,7 +98,7 @@ int8_t execute_instruction(Instruction *inst, int line)
 
                 int8_t a = peek(&stack);
 
-                printf("%d", a);
+                io_write(&io_buffer, a);
             }
             return line + 1;
 
@@ -150,6 +139,17 @@ int8_t execute_instruction(Instruction *inst, int line)
             }
             break;
 
+        case OP_POP:
+            for (int r = 0; r < inst->count ; r++){
+                if (is_empty(&stack)) {
+                    printf("Stack underflow in DUMP\n");
+                    exit(1);
+                }
+
+                int8_t a = pop(&stack);
+            }
+            return line + 1;
+
         case OP_PUSH:
             for (int r = 0; r < inst->count ; r++){
                 int8_t a = inst->arg;
@@ -182,8 +182,11 @@ void parse(char code[])
 
 int main() 
 {
+    printf("\e[?25l");
+
     int debug = 0; //set to 1 to enable debug messages
-    init(&stack);
+    init(&stack, 256);
+    init(&io_buffer, 1024);
 
     int line = 0;
     pc = (Instruction*)malloc(sizeof(Instruction) * program_size);

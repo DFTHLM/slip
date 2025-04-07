@@ -1,17 +1,15 @@
 #ifndef STACK_H
-#define STACK_H
-
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 
 
-#define MAX_SIZE 256
-
 typedef struct {
-    int8_t arr[MAX_SIZE];
+    int8_t* arr;
     int top;
 } Stack;
 
-void init(Stack *stack);
+void init(Stack *stack, int size);
 int8_t is_empty(Stack *stack);
 int8_t is_full(Stack *stack);
 void push(Stack *stack, int8_t value);
