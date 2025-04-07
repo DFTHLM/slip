@@ -27,7 +27,7 @@ INT       ; [5] Overwrites the line 5 lines above with NOP, jumps there
 (Currently, to make a file you need to edit the program variable in slip.c - array of Instruction {count, OpCode, arg} - and recompile)
 
 ## Compilation:
-Link slip.c and stack.c, compile and run:
+Link slip.c, stack.c and unified_io.c, compile and run:
 ```bash
 git clone https://github.com/DFTHLM/slip.git
 cd slip
