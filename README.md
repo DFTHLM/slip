@@ -9,7 +9,7 @@
 | `OP_ADD`  | 1     | Pops `a`, `b` → pushes `a + b`               |
 | `OP_SUB`  | 2     | Pops `a`, `b` → pushes `a - b`               |
 | `OP_READ` | 3     | Blocking destructive read from stdin         |
-| `OP_WRITE`| 4     | Peeks at the top os stack and writes it      |
+| `OP_WRITE`| 4     | Peeks at the top of stack and writes it      |
 | `OP_INT`  | 5     | Modifies code: pops `op` then `line`         |
 | `OP_POP`  | 5     | Destroys the top of the stack                |
 | `OP_PUSH` | 6     | Pushes argument (only instruction with args) |
