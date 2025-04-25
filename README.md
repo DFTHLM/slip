@@ -28,12 +28,12 @@ INT       ; [5] Overwrites the line 6 lines above with NOP, jumps there
 Currently, to make a program you need to edit the *program* variable in slip.c - array of Instruction {count, OpCode, arg} - and recompile
 
 ## Compilation:
-Link slip.c, stack.c and unified_io.c, compile and run:
+Compile using CMake:
 ```bash
 git clone https://github.com/DFTHLM/slip.git
-cd slip
-gcc slip.c stack.c unified_io.c -o slip
-./slip
+mkdir build && cd build/
+CMake ..
+make
 ```
 
 ## Roadmap
