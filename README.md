@@ -38,7 +38,7 @@ make
 
 ## Roadmap
 - [ ] Parse program from file
-- [ ] Dynamic program expansion for `INT`
+- [x] Dynamic program expansion for `INT`
 - [x] Unified I/O system (shared buffer for READ/WRITE)
 - [ ] Better error handling
 - [ ] Example programs gallery
