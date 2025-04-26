@@ -5,7 +5,7 @@ IOBuffer io_buffer;
 
 Instruction program[] = {
     {1, OP_NOP, 0},
-    {1, OP_PUSH, -5},
+    {1, OP_PUSH, -7},
     {1, OP_PUSH, 0},
     {1, OP_PUSH, 65},
     {1, OP_WRITE, 0},
@@ -173,7 +173,7 @@ int8_t execute_instruction(Instruction *inst, int line)
                     exit(1);
                 }
 
-                int8_t a = pop(&stack);
+                pop(&stack);
             }
             return line + 1;
 
@@ -232,6 +232,10 @@ int main()
             }
         }
     }
+
+    free(pc);
+    free(stack.arr);
+    free(io_buffer.arr);
     printf("\n\e[?25h");
 
     return 0;

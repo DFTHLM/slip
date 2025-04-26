@@ -19,13 +19,17 @@ int io_read(IOBuffer *io_buffer)
         printf("IOBuffer is NULL\n");
         return -1;
     }
+
     if (io_buffer->top == -1) {
-
+        int term_input = getchar();
+        return term_input;
+    } else {
+        int value = pop(io_buffer);
+        print_io_buffer(io_buffer);
+        return value;
     }
-
-    int value = pop(io_buffer);
-    print_io_buffer(io_buffer);
-    return value;
+    
+    return -1;
 }
 
 void io_write(IOBuffer *io_buffer, int value)
