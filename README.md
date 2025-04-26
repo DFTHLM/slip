@@ -34,6 +34,7 @@ git clone https://github.com/DFTHLM/slip.git
 mkdir build && cd build/
 CMake ..
 make
+# to test: make test
 ```
 
 ## Roadmap
