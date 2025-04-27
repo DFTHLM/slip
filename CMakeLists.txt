@@ -16,7 +16,7 @@ set(SOURCES
     src/slip.c
     src/stack.c
     src/unified_io.c
-    src/error_handling.c
+    src/instructions.c
 )
 
 add_executable(slip ${SOURCES})
