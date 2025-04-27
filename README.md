@@ -1,5 +1,8 @@
 # SLIP - A stack based, self modifying eslonag
 
+## What is it?
+SLIP is a stack based esolang with a self-modifying instruction set. The language is inspired by the concept of self-modifying code, where the program can change its own instructions at runtime.
+
 ## The language:
 ### Instruction Set
 
@@ -38,6 +41,7 @@ make
 ```
 
 ## Roadmap
+- [ ] Unit tests (partially done so far)
 - [ ] Parse program from file
 - [x] Dynamic program expansion for `INT`
 - [x] Unified I/O system (shared buffer for READ/WRITE)
