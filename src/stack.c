@@ -1,7 +1,7 @@
 #include "stack.h"
 
 void init(Stack *stack, int size) {
-    stack->arr = (int8_t *)malloc(size * sizeof(int8_t));
+    stack->arr = (int16_t *)malloc(size * sizeof(int16_t));
     stack->top = -1;
 }
 
@@ -13,9 +13,14 @@ int8_t is_full(Stack *stack) {
     return stack->top == 255;
 }
 
-void push(char **error, Stack *stack, int8_t value) {
+void push(char **error, Stack *stack, int16_t value) {
     if (is_full(stack)) {
         *error = strdup("Stack overflow");
+        return;
+    }
+
+    if (value < -256 || value > 256) {
+        *error = strdup("Value out of range");
         return;
     }
 

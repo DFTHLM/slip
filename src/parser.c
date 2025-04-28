@@ -21,7 +21,7 @@ int is_valid_integer(const char *str, int *out_value) {
         endptr++;
     }
 
-    if (val < -256 || val > 255) {
+    if (val < -256 || val > 256) {
         return 0;
     }
 
