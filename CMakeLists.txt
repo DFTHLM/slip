@@ -17,6 +17,7 @@ set(SOURCES
     src/stack.c
     src/unified_io.c
     src/instructions.c
+    src/error_handling.c
 )
 
 add_executable(slip ${SOURCES})
@@ -55,6 +56,23 @@ target_include_directories(io_tests PRIVATE src tests)
 
 add_test(NAME IOTests
     COMMAND io_tests
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+set(INSTRUCTION_TEST_SOURCES
+    tests/instruction_tests.c
+    tests/unity/unity.c
+    src/instructions.c
+    src/stack.c
+    src/unified_io.c
+)
+
+add_executable(instruction_tests ${INSTRUCTION_TEST_SOURCES})
+
+target_include_directories(instruction_tests PRIVATE src tests)
+
+add_test(NAME InstructionTests
+    COMMAND instruction_tests
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 

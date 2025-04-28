@@ -1,184 +1,188 @@
 #include "instructions.h"
 
-int op_add(Stack *stack, Instruction *inst, int line) 
+int op_add(char **error, Stack *stack, Instruction *inst, int line) 
 {
     for (int r = 0; r < inst->count ; r++){
         int8_t a, b;
 
-        if (!is_empty(stack)) {
-            a = pop(stack);
-        } else {
-            printf("Stack underflow in ADD\n");
-            exit(1);
+        a = pop(error, stack);
+        if (*error) {
+            return 1;
         }
 
-        if (!is_empty(stack)) {
-            b = pop(stack);
-        } else {
-            printf("Stack underflow in ADD\n");
-            exit(1);
+        b = pop(error, stack);
+        if (*error) {
+            return 1;
         }
 
-        push(stack, a + b);
+        push(error, stack, a + b);
+
+        if (*error) {
+            return 1;
+        }
     }
-    return line + inst->count;
+    return line + 1;
 }
 
-int op_sub(Stack *stack, Instruction *inst, int line)
+int op_sub(char **error, Stack *stack, Instruction *inst, int line)
 {
     for (int r = 0; r < inst->count ; r++){
         int8_t a, b;
 
-        if (!is_empty(stack)) {
-            a = pop(stack);
-        } else {
-            printf("Stack underflow in SUB\n");
-            exit(1);
+        a = pop(error, stack);
+        if (*error) {
+            return -1;
         }
 
-        if (!is_empty(stack)) {
-            b = pop(stack);
-        } else {
-            printf("Stack underflow in SUB\n");
-            exit(1);
+        b = pop(error, stack);
+        if (*error) {
+            return -1;
         }
 
-        push(stack, a - b);
+        push(error, stack, a - b);
+        if (*error) {
+            return -1;
+        }
     }
-    return line + inst->count;
+    return line + 1;
 }
 
-int op_write(Stack *stack, IOBuffer *buffer, Instruction *inst, int line)
+int op_write(char **error, Stack *stack, IOBuffer *buffer, Instruction *inst, int line)
 {
     for (int r = 0; r < inst->count ; r++){
-        if (is_empty(stack)) {
-            printf("Stack underflow in WRITE\n");
-            exit(1);
+        int8_t a = peek(error, stack);
+
+        if (*error) {
+            return -1;
         }
 
-        int8_t a = peek(stack);
-
-        io_write(buffer, a);
+        io_write(error, buffer, a);
+        if (*error) {
+            return -1;
+        }
     }
-    return line + inst->count;
+    return line + 1;
 }
 
-int op_read(Stack *stack, IOBuffer *buffer, Instruction *inst, int line)
+int op_read(char **error, Stack *stack, IOBuffer *buffer, Instruction *inst, int line)
 {
     for (int r = 0; r < inst->count ; r++){
-        int8_t a = io_read(buffer);
-
-        if (a == EOF) {
-            printf("Input error\n");
-            exit(1);
+        int8_t a = io_read(error, buffer);
+        if (*error) {
+            return -1;
         }
 
-        push(stack, a);
+        push(error, stack, a);
+        if (*error) {
+            return -1;
+        }
     }
-    return line + inst->count;
+    return line + 1;
 }
 
-int op_int(Stack *stack, Instruction *inst, Instruction **pc, int *program_size, int line)
+int op_int(char **error, Stack *stack, Instruction *inst, Instruction **pc, int *program_size, int line)
 {
-            for (int r = 0; r < inst->count ; r++){
-                int8_t x, y;
+    int invalid = 0;
+    for (int r = 0; r < inst->count ; r++){
+        int8_t x, y;
 
-                if (!is_empty(stack)) {
-                    x = pop(stack);
-                } else {
-                    printf("Stack underflow in INT\n");
-                    exit(1);
-                }
+        x = pop(error, stack);
+        if (*error) {
+            return -1;
+        }
 
-                if (x > COUNT || x < 0) {
-                    continue;
-                }
+        if (x > COUNT || x < 0) {
+            push(error, stack, x);
+            if (*error) {
+                return -1;
+            }
+            invalid = 1;
+            continue;
+        }
 
-                if (!is_empty(stack)) {
-                    y = pop(stack);
-                } else {
-                    printf("Stack underflow in INT\n");
-                    exit(1);
-                }
-                
-                int target_line = line + y;
+        y = pop(error, stack);
+        if (*error) {
+            return -1;
+        }
+        
+        int target_line = line + y;
 
-                if (target_line >= 0 && target_line < *program_size) {
-                    line = target_line;
-                    (*pc)[target_line].count = 1;
-                    (*pc)[target_line].op = x;
-                    (*pc)[target_line].arg = 0;
+        if (target_line >= 0 && target_line < *program_size) {
+            line = target_line;
+            (*pc)[target_line].count = 1;
+            (*pc)[target_line].op = x;
+            (*pc)[target_line].arg = 0;
 
-                } else {
-                    int new_size = *program_size + 2;
-                    
-                    if (*program_size > INT_MAX - 2) {
-                        printf("Program size overflow\n");
-                        exit(1);
-                    }
-
-                    Instruction *new_pc = realloc(*pc, sizeof(Instruction) * new_size);
-                    if (!new_pc) {
-                        printf("Memory allocation failed\n");
-                        exit(1);
-                    }
-                    *pc = new_pc;  // update the pointer in main()
-                    
-                    int old_size = *program_size;
-                    *program_size = new_size;  // update size
-
-                    if (target_line < 0) {
-                        memmove((*pc) + 2, (*pc), sizeof(Instruction) * *program_size);
-                        (*pc)[0].count = 1;
-                        (*pc)[0].op = x;
-                        (*pc)[0].arg = 0;
-                        (*pc)[1].count = abs(target_line) - 1;
-                        (*pc)[1].op = OP_NOP;
-                        (*pc)[1].arg = 0;
-                        line = 0;
-
-                    } else {
-                        (*pc)[old_size].count = 1;
-                        (*pc)[old_size].op = x;
-                        (*pc)[old_size].arg = 0;
-                        (*pc)[old_size - 1].count = target_line - old_size - 1;
-                        (*pc)[old_size - 1].op = OP_NOP;
-                        (*pc)[old_size - 1].arg = 0;
-                        line = old_size;
-                    }
-
-                    *program_size = new_size;
-                }
+        } else {
+            int new_size = *program_size + 2;
+            
+            if (*program_size > INT_MAX - 2) {
+                *error = strdup("Program size exceeded maximum limit");
+                return -1;
             }
 
-            return line;
-}
+            Instruction *new_pc = realloc(*pc, sizeof(Instruction) * new_size);
+            if (new_pc == NULL) {
+                *error = strdup("Memory allocation failed");
+                return -1;
+            }
+            *pc = new_pc;  // update the pointer in main()
+            
+            int old_size = *program_size;
+            *program_size = new_size;  // update size
 
-int op_pop(Stack *stack, Instruction *inst, int line)
-{
-    for (int r = 0; r < inst->count ; r++){
-        if (is_empty(stack)) {
-            printf("Stack underflow in POP\n");
-            exit(1);
+            if (target_line < 0) {
+                memmove((*pc) + 2, (*pc), sizeof(Instruction) * *program_size);
+                (*pc)[0].count = 1;
+                (*pc)[0].op = x;
+                (*pc)[0].arg = 0;
+                (*pc)[1].count = abs(target_line) - 1;
+                (*pc)[1].op = OP_NOP;
+                (*pc)[1].arg = 0;
+                line = 0;
+
+            } else {
+                (*pc)[old_size].count = 1;
+                (*pc)[old_size].op = x;
+                (*pc)[old_size].arg = 0;
+                (*pc)[old_size - 1].count = target_line - old_size - 1;
+                (*pc)[old_size - 1].op = OP_NOP;
+                (*pc)[old_size - 1].arg = 0;
+                line = old_size;
+            }
+
+            *program_size = new_size;
         }
-
-        pop(stack);
     }
 
-    return line + inst->count;
+    if (invalid) {
+        line += 1;
+    }
+
+    return line;
 }
 
-int op_push(Stack *stack, Instruction *inst, int line)
+int op_pop(char **error, Stack *stack, Instruction *inst, int line)
+{
+    for (int r = 0; r < inst->count ; r++){
+        pop(error, stack);
+        if (*error) {
+            return -1;
+        }
+    }
+
+    return line + 1;
+}
+
+int op_push(char **error, Stack *stack, Instruction *inst, int line)
 {
     for (int r = 0; r < inst->count ; r++){
         int8_t a = inst->arg;
 
-        if (is_full(stack)) {
-            printf("Stack overflow in PUSH\n");
-            exit(1);
+        push(error, stack, a);
+        if (*error) {
+            return -1;
         }
-
-        push(stack, a);
     }
     return line + 1;
 }

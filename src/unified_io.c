@@ -1,45 +1,63 @@
 #include "unified_io.h"
 //extends io_buffer to make it an IO buffer
 
-void print_io_buffer(IOBuffer *io_buffer) {
+void print_io_buffer(char **error, IOBuffer *io_buffer) {
     printf("\33[2K\r");
     if (io_buffer == NULL) {
-        printf("IOBuffer is NULL\n");
+        *error = strdup("IOBuffer is NULL");
         return;
     }
 
-    for (int i = io_buffer->top; i >= 0; i--) {
+    for (int i = 0; i <= io_buffer->top; i++) {
         printf("%c", io_buffer->arr[i]);
     }
 }
 
-int io_read(IOBuffer *io_buffer)
+int io_read(char **error, IOBuffer *io_buffer)
 {
     if (io_buffer == NULL) {
-        printf("IOBuffer is NULL\n");
+        *error = strdup("IOBuffer is NULL");
         return -1;
     }
 
     if (io_buffer->top == -1) {
         int term_input = getchar();
         return term_input;
+
     } else {
-        int value = pop(io_buffer);
-        print_io_buffer(io_buffer);
+        int value = pop(error, io_buffer);
+        if (*error) {
+            return -1;
+        }
+
+        print_io_buffer(error, io_buffer);
+        if (*error) {
+            return -1;
+        }
+
         return value;
     }
     
     return -1;
 }
 
-void io_write(IOBuffer *io_buffer, int value)
+void io_write(char **error, IOBuffer *io_buffer, int value)
 {
     if (io_buffer == NULL) {
-        printf("IOBuffer is NULL\n");
-        exit(1);
+        *error = strdup("IOBuffer is NULL");
+        return;
     }
 
-    push(io_buffer, value);
-    print_io_buffer(io_buffer);
+    push(error, io_buffer, value);
+    if (*error) {
+        return;
+    }
+
+    print_io_buffer(error, io_buffer);
+    if (*error) {
+        return;
+    }
+
+
 }
 

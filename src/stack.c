@@ -13,27 +13,30 @@ int8_t is_full(Stack *stack) {
     return stack->top == 255;
 }
 
-void push(Stack *stack, int8_t value) {
+void push(char **error, Stack *stack, int8_t value) {
     if (is_full(stack)) {
-        printf("Stack overflow\n");
-        exit(1);
+        *error = strdup("Stack overflow");
+        return;
     }
+
     stack->arr[++stack->top] = value;
 }
 
-int8_t pop(Stack *stack) {
+int8_t pop(char **error, Stack *stack) {
     if (is_empty(stack)) {
-        printf("Stack underflow\n");
-        exit(1);
+        *error = strdup("Stack underflow");
+        return -1;
     }
+
     return stack->arr[stack->top--];
 }
 
-int8_t peek(Stack *stack) {
+int8_t peek(char **error, Stack *stack) {
     if (is_empty(stack)) {
-        printf("Stack is empty\n");
-        exit(1);
+        *error = strdup("Stack underflow");
+        return -1;
     }
+
     return stack->arr[stack->top];
 }
 

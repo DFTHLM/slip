@@ -5,17 +5,7 @@
 #include "stack.h"
 #include "unified_io.h"
 #include "instructions.h"
-
-static const char* OPCODE_NAMES[] = {
-    "OP_NOP",
-    "OP_ADD",
-    "OP_SUB",
-    "OP_READ",
-    "OP_WRITE",
-    "OP_INT",
-    "OP_POP",
-    "OP_PUSH"
-};
+#include "error_handling.h"
 
 int8_t execute_instruction(Instruction *inst, int line);
 

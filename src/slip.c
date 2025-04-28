@@ -4,12 +4,28 @@ Stack stack;
 IOBuffer io_buffer;
 
 Instruction program[] = {
-    {1, OP_PUSH, -7},
-    {1, OP_PUSH, 0},
-    {1, OP_PUSH, 65},
-    {1, OP_WRITE, 0},
-    {1, OP_POP, 0},
-    {1, OP_INT, 0}
+    {1, OP_PUSH,   0},
+    {1, OP_PUSH,   5},
+    {1, OP_PUSH,  33},
+    {1, OP_PUSH, 100},
+    {1, OP_PUSH, 108},
+    {1, OP_PUSH, 114},
+    {1, OP_PUSH, 111},
+    {1, OP_PUSH,  87},
+    {1, OP_PUSH,  32},
+    {1, OP_PUSH,  44},
+    {1, OP_PUSH, 111},
+    {1, OP_PUSH, 108},
+    {1, OP_PUSH, 108},
+    {1, OP_PUSH, 101},
+    {1, OP_PUSH,  72},
+    {1, OP_INT,    0},
+    {1, OP_WRITE,  0},
+    {1, OP_POP,    0},
+    {1, OP_PUSH,  -5},
+    {1, OP_PUSH,   5},
+    {1, OP_INT,    0},
+    {1, OP_NOP,    0}
 };
 
 int program_size = sizeof(program) / sizeof(Instruction);
@@ -17,51 +33,87 @@ Instruction* pc;
 
 int8_t execute_instruction(Instruction *inst, int line) 
 {
+    char *error = NULL;
+    int8_t result = 0;
+
     switch (inst->op) {
         case OP_NOP:
             for (int r = 0; r < inst->count ; r++){
                 continue;
             }
-            return line + inst->count;
+
+            return line + 1;
 
         case OP_ADD:
-            line = op_add(&stack, inst, line);
-            return line;
+            result = op_add(&error, &stack, inst, line);
+            if (error) {
+                fatal_error(&error, pc, &stack, line, program_size);
+                return -1;
+            }
+            return result;
 
         case OP_SUB:
-            line = op_sub(&stack, inst, line);
-            return line;
+            result = op_sub(&error, &stack, inst, line);
+            if (error) {
+                fatal_error(&error, pc, &stack, line, program_size);
+                free(error);
+                return -1;
+            }
+            return result;
 
         case OP_READ:
-            line = op_read(&stack, &io_buffer, inst, line);
-            return line;
+            result = op_read(&error, &stack, &io_buffer, inst, line);
+            if (error) {
+                fatal_error(&error, pc, &stack, line, program_size);
+                free(error);
+                return -1;
+            }
+            return result;
 
         case OP_WRITE:
-            line = op_write(&stack, &io_buffer, inst, line);
-            return line;
+            result = op_write(&error, &stack, &io_buffer, inst, line);
+            if (error) {
+                fatal_error(&error, pc, &stack, line, program_size);
+                free(error);
+                return -1;
+            }
+            return result;
 
         case OP_INT:
-            line = op_int(&stack, inst, &pc, &program_size, line);
-            return line;
+            result = op_int(&error, &stack, inst, &pc, &program_size, line);
+            if (error) {
+                fatal_error(&error, pc, &stack, line, program_size);
+                free(error);
+                return -1;
+            }
+            return result;
 
         case OP_POP:
-            line = op_pop(&stack, inst, line);
-            return line;
+            result = op_pop(&error, &stack, inst, line);
+            if (error) {
+                fatal_error(&error, pc, &stack, line, program_size);
+                free(error);
+                return -1;
+            }
+            return result;
 
         case OP_PUSH:
-            line = op_push(&stack, inst, line);
-            return line;
+            result = op_push(&error, &stack, inst, line);
+            if (result < 0) {
+                fatal_error(&error, pc, &stack, line, program_size);
+                free(error);
+                return -1;
+            }
+            return result;
         
         case COUNT:
             return line;
 
         default:
-            printf("Unknown operation\n");
-            exit(1);
+            error = strdup("Unknown operation");
+            fatal_error(&error, pc, &stack, line, program_size);
             return line + 1;
     }
-
-    return line + 1;
 }
 
 int main() 
@@ -86,18 +138,28 @@ int main()
             printf("program size: %d\n", program_size);
             printf("Operation: %d, Count: %s (%d), Arg: %d\n", pc[line].op, op_name, pc[line].count, pc[line].arg);
         }
+
+        if (line < 0 || line >= program_size) {
+            char *error = "Invalid line number";
+            fatal_error(&error, pc, &stack, line, program_size);
+        }
+
         line = execute_instruction(&pc[line], line);
+
         if (debug) {
             if (!is_empty(&stack)) {
-                int8_t top = peek(&stack);
+                char *error = NULL;
+                int8_t top = peek(&error, &stack);
+                if (error) {
+                    fatal_error(&error, pc, &stack, line, program_size);
+                    free(error);
+                    return -1;
+                }
                 printf("Top of stack: %d\n", top);
             }
         }
     }
 
-    free(pc);
-    free(stack.arr);
-    free(io_buffer.arr);
     printf("\n\e[?25h");
 
     return 0;

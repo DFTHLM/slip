@@ -4,6 +4,7 @@
 
 #define IO_SIZE 256
 IOBuffer buffer;
+char *error;
 
 void setUp(void) {
     init(&buffer, IO_SIZE);
@@ -19,9 +20,9 @@ void test_io_write(void) {
     TEST_ASSERT_NOT_NULL(tmpfile);
     stdout = tmpfile;
 
-    io_write(&buffer, 'A');
-    io_write(&buffer, 'B');
-    io_write(&buffer, 'C');
+    io_write(&error, &buffer, 'A');
+    io_write(&error, &buffer, 'B');
+    io_write(&error, &buffer, 'C');
 
     fflush(stdout);
     stdout = orig_stdout;
@@ -33,7 +34,7 @@ void test_io_write(void) {
     fclose(tmpfile);
     remove("./tests/test_output.txt");
 
-    TEST_ASSERT_EQUAL_STRING("\x1B[2K\rA\x1B[2K\rBA\x1B[2K\rCBA", output);
+    TEST_ASSERT_EQUAL_STRING("\x1B[2K\rA\x1B[2K\rAB\x1B[2K\rABC", output);
 }
 
 void test_io_read(void) {
@@ -42,9 +43,9 @@ void test_io_read(void) {
     TEST_ASSERT_NOT_NULL(tmpfile);
     stdout = tmpfile;
 
-    io_write(&buffer, 'A');
-    io_write(&buffer, 'B');
-    io_read(&buffer);
+    io_write(&error, &buffer, 'A');
+    io_write(&error, &buffer, 'B');
+    io_read(&error, &buffer);
 
     fflush(stdout);
     stdout = orig_stdout;
@@ -56,7 +57,7 @@ void test_io_read(void) {
     fclose(tmpfile);
     remove("./tests/test_output.txt");
 
-    TEST_ASSERT_EQUAL_STRING("\x1B[2K\rA\x1B[2K\rBA\x1B[2K\rA", output);
+    TEST_ASSERT_EQUAL_STRING("\x1B[2K\rA\x1B[2K\rAB\x1B[2K\rA", output);
 }
 
 void test_buffer_overflow(void) {
@@ -66,11 +67,11 @@ void test_buffer_overflow(void) {
     init(&temp_buffer, 10);
 
     for (int i = 0; i <= 10; i++) {
-        io_write(&temp_buffer, 'A');
+        io_write(&error, &temp_buffer, 'A');
     }
 
     freopen("stderr.txt", "w", stderr);
-    io_write(&temp_buffer, 'B');
+    io_write(&error, &temp_buffer, 'B');
     freopen("/dev/tty", "w", stderr);  // Reset stderr
     free(temp_buffer.arr);
     
@@ -79,7 +80,7 @@ void test_buffer_overflow(void) {
     fgets(error, sizeof(error), fp);
     fclose(fp);
     remove("stderr.txt");
-    TEST_ASSERT_EQUAL_STRING("\x1B[2K\rA\x1B[2K\rBA\x1B[2K\rA", error);
+    TEST_ASSERT_EQUAL_STRING("\x1B[2K\rA\x1B[2K\rAB\x1B[2K\rA", error);
 
 }
 
