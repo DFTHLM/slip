@@ -17,12 +17,12 @@ void tearDown(void) {
 
 void test_push(void) {
     Instruction program[] = {
-        {1, OP_PUSH, 1},
-        {1, OP_PUSH, 2},
+        {OP_PUSH, 1},
+        {OP_PUSH, 2},
     };
 
-    op_push(&error, &stack, &program[0], 0);
-    op_push(&error, &stack, &program[1], 1);
+    op_push(&error, &program[0], &stack, 0);
+    op_push(&error, &program[1], &stack, 1);
 
     TEST_ASSERT_EQUAL(1, stack.arr[0]);
     TEST_ASSERT_EQUAL(2, stack.arr[1]);
@@ -33,11 +33,7 @@ void test_pop(void) {
     stack.arr[1] = 2;
     stack.top = 1;
 
-    Instruction program[] = {
-        {1, OP_POP, 0},
-    };
-
-    op_pop(&error, &stack, &program[0], 0);
+    op_pop(&error, &stack, 0);
 
     TEST_ASSERT_EQUAL(1, stack.arr[0]);
 }
@@ -47,11 +43,7 @@ void test_add(void) {
     stack.arr[1] = 2;
     stack.top = 1;
 
-    Instruction program[] = {
-        {1, OP_ADD, 0},
-    };
-
-    op_add(&error, &stack, &program[0], 0);
+    op_add(&error, &stack, 0);
 
     TEST_ASSERT_EQUAL(3, stack.arr[0]);
 }
@@ -61,11 +53,7 @@ void test_sub(void) {
     stack.arr[1] = 3;
     stack.top = 1;
 
-    Instruction program[] = {
-        {1, OP_SUB, 0},
-    };
-
-    op_sub(&error, &stack, &program[0], 0);
+    op_sub(&error, &stack, 0);
 
     TEST_ASSERT_EQUAL(1, stack.arr[0]);
 }
@@ -74,11 +62,7 @@ void test_write(void) {
     stack.arr[0] = 1;
     stack.top = 0;
 
-    Instruction program[] = {
-        {1, OP_WRITE, 0},
-    };
-
-    op_write(&error, &stack, &buffer, &program[0], 0);
+    op_write(&error, &stack, &buffer, 0);
 
     TEST_ASSERT_EQUAL(buffer.arr[0], stack.arr[0]);
 }
@@ -87,11 +71,7 @@ void test_read(void) {
     buffer.arr[0] = 1;
     buffer.top = 0;
 
-    Instruction program[] = {
-        {1, OP_READ, 0},
-    };
-
-    op_read(&error, &stack, &buffer, &program[0], 0);
+    op_read(&error, &stack, &buffer, 0);
 
     TEST_ASSERT_EQUAL(1, stack.arr[0]);
 }
@@ -100,15 +80,14 @@ void test_int(void) {
     stack.arr[0] = 2;
     stack.arr[1] = 0;
     Instruction program[] = {
-        {1, OP_INT, 0},
+        {OP_INT, 0},
     };
 
     Instruction *pc = program;
 
-    op_int(&error, &stack, &program[0], &pc, 0, 1);
+    op_int(&error, &stack, &pc, 0, 1);
 
     TEST_ASSERT_EQUAL(0, pc[0].op);
-    TEST_ASSERT_EQUAL(1, pc[1].count);
 }
 
 int main(void) {

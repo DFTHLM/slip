@@ -6,7 +6,7 @@ void init(Stack *stack, int size) {
 }
 
 int8_t is_empty(Stack *stack) {
-    return stack->top == (uint8_t)-1;
+    return stack->top == -1;
 }
 
 int8_t is_full(Stack *stack) {

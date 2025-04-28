@@ -8,7 +8,7 @@
 
 typedef struct {
     int16_t* arr;
-    uint8_t top;
+    int top;
 } Stack;
 
 void init(Stack *stack, int size);

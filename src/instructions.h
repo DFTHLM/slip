@@ -22,17 +22,16 @@ typedef enum {
 
 
 typedef struct {
-    int count;
     OpCode op;
     int8_t arg;
 } Instruction;
 
-int op_add(char **error, Stack *stack, Instruction *inst, int line);
-int op_sub(char **error, Stack *stack, Instruction *inst, int line);
-int op_read(char **error, Stack *stack, IOBuffer *buffer, Instruction *inst, int line);
-int op_write(char **error, Stack *stack, IOBuffer *buffer, Instruction *inst, int line);
-int op_int(char **error, Stack *stack, Instruction *inst, Instruction **pc, int *program_size, int line);
-int op_pop(char **error, Stack *stack, Instruction *inst, int line);
-int op_push(char **error, Stack *stack, Instruction *inst, int line);
+int op_add(char **error, Stack *stack, int line);
+int op_sub(char **error, Stack *stack, int line);
+int op_read(char **error, Stack *stack, IOBuffer *buffer, int line);
+int op_write(char **error, Stack *stack, IOBuffer *buffer, int line);
+int op_int(char **error, Stack *stack, Instruction **pc, int *program_size, int line);
+int op_pop(char **error, Stack *stack, int line);
+int op_push(char **error, Instruction *inst, Stack *stack, int line);
 
 #endif // INSTRUCTIONS_H

@@ -1,7 +1,5 @@
 #include "parser.h"
 
-Instruction error_instruction[1] = {{0, 0, 0}};
-
 int is_valid_integer(const char *str, int *out_value) {
     char *endptr;
     errno = 0;
@@ -29,7 +27,7 @@ int is_valid_integer(const char *str, int *out_value) {
     return 1;
 }
 
-OpCode parse_opcode(const char *str) {
+int parse_opcode(const char *str) {
     if (strcmp(str, "NOP") == 0) return OP_NOP;
     if (strcmp(str, "ADD") == 0) return OP_ADD;
     if (strcmp(str, "SUB") == 0) return OP_SUB;
@@ -79,7 +77,7 @@ Instruction *parse(char *filename, int *out_program_size)
 
         OpCode op = parse_opcode(tokens[0]);
         if (op == -1) {
-            fprintf(stderr, "Invalid opcode: %s\n", tokens[0]);
+            fprintf(stderr, "Invalid operation: %s\n", tokens[0]);
             free(program);
             fclose(file);
             exit(EXIT_FAILURE);
@@ -100,26 +98,9 @@ Instruction *parse(char *filename, int *out_program_size)
             }
         }
 
-        //collapse consecutive instructions
-        if (program_size > 0 && op == program[program_size - 1].op) {
-            if (op == OP_PUSH) {
-                if (program[program_size - 1].arg != arg) {
-                    program[program_size].count = count;
-                    program[program_size].op = op;
-                    program[program_size].arg = arg;
-                    program_size++;
-                } else {
-                    program[program_size - 1].count += count;
-                }
-            } else {
-                program[program_size - 1].count += count;
-            }
-        } else {
-            program[program_size].count = count;
-            program[program_size].op = op;
-            program[program_size].arg = arg;
-            program_size++;
-        }
+        program[program_size].op = op;
+        program[program_size].arg = arg;
+        program_size++;
     }
 
     fclose(file);
