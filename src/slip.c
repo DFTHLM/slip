@@ -82,6 +82,14 @@ int8_t execute_instruction(Instruction *inst, int line)
                 return -1;
             }
             return result;
+
+        case OP_SWAP:
+            result = op_swap(&error, &stack, line);
+            if (error) {
+                fatal_error(&error, program, &stack, line, program_size);
+                return -1;
+            }
+            return result;
         
         case COUNT:
             return line;
@@ -106,7 +114,7 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    if (argc == 3 && ((strcmp(argv[2], "--debug") == 0) | (strcmp(argv[2], "-d") == 0))) {
+    if (argc == 3 && (strcmp(argv[2], "--debug") == 0 || strcmp(argv[2], "-d") == 0)) {
         debug = 1;
     }
 

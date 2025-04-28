@@ -2,29 +2,29 @@
 
 int op_add(char **error, Stack *stack, int line) 
 {
-    int8_t a, b;
+    int16_t a, b;
 
     a = pop(error, stack);
     if (*error) {
-        return 1;
+        return -1;
     }
 
     b = pop(error, stack);
     if (*error) {
-        return 1;
+        return -1;
     }
 
     push(error, stack, a + b);
 
     if (*error) {
-        return 1;
+        return -1;
     }
     return line + 1;
 }
 
 int op_sub(char **error, Stack *stack, int line)
 {
-    int8_t a, b;
+    int16_t a, b;
 
     a = pop(error, stack);
     if (*error) {
@@ -45,7 +45,7 @@ int op_sub(char **error, Stack *stack, int line)
 
 int op_write(char **error, Stack *stack, IOBuffer *buffer, int line)
 {
-    int8_t a = peek(error, stack);
+    int16_t a = peek(error, stack);
 
     if (*error) {
         return -1;
@@ -74,7 +74,7 @@ int op_read(char **error, Stack *stack, IOBuffer *buffer, int line)
 
 int op_int(char **error, Stack *stack, Instruction **pc, int *program_size, int line)
 {
-    int8_t x, y;
+    int16_t x, y;
 
     x = pop(error, stack);
     if (*error) {
@@ -153,9 +153,36 @@ int op_pop(char **error, Stack *stack, int line)
 
 int op_push(char **error, Instruction *inst, Stack *stack, int line)
 {
-    int8_t a = inst->arg;
+    int16_t a = inst->arg;
 
     push(error, stack, a);
+    if (*error) {
+        return -1;
+    }
+
+    return line + 1;
+}
+
+int op_swap(char **error, Stack *stack, int line)
+{
+    int16_t a, b;
+
+    a = pop(error, stack);
+    if (*error) {
+        return -1;
+    }
+
+    b = pop(error, stack);
+    if (*error) {
+        return -1;
+    }
+
+    push(error, stack, a);
+    if (*error) {
+        return -1;
+    }
+
+    push(error, stack, b);
     if (*error) {
         return -1;
     }

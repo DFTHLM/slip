@@ -36,6 +36,7 @@ int parse_opcode(const char *str) {
     if (strcmp(str, "INT") == 0) return OP_INT;
     if (strcmp(str, "POP") == 0) return OP_POP;
     if (strcmp(str, "PUSH") == 0) return OP_PUSH;
+    if (strcmp(str, "SWAP") == 0) return OP_SWAP;
 
     return -1; // Invalid opcode
 }
@@ -59,9 +60,11 @@ Instruction *parse(char *filename, int *out_program_size)
 
     char line[MAX_LINE_LENGTH];
     int program_size = 0;
+    int line_number = 0;
 
     while (fgets(line, sizeof(line), file) != NULL)
     {
+        line_number++;
         char *tokens[4];
         int token_count = 0;
 
@@ -70,30 +73,28 @@ Instruction *parse(char *filename, int *out_program_size)
             tokens[token_count++] = token;
             token = strtok(NULL, " \t\n");
         }
-
-        if (token_count == 0) {
+        if (token_count == 0 || tokens[0][0] == ';') {
             continue;
         }
 
         OpCode op = parse_opcode(tokens[0]);
         if (op == -1) {
-            fprintf(stderr, "Invalid operation: %s\n", tokens[0]);
+            fprintf(stderr, "Invalid operation: %s at line %d\n", tokens[0], line_number);
             free(program);
             fclose(file);
             exit(EXIT_FAILURE);
         }
 
-        int count = 1;
         int arg = 0;
 
         if (op == OP_PUSH) {
             if (token_count >= 2) {
                 if (!is_valid_integer(tokens[1], &arg)) {
-                    fprintf(stderr, "Invalid argument: %s\n", tokens[1]);
+                    fprintf(stderr, "Invalid argument: %s on line: %d\n", tokens[1], line_number);
                     exit(EXIT_FAILURE);
                 }
             } else {
-                fprintf(stderr, "Missing argument for %s\n", tokens[0]);
+                fprintf(stderr, "Missing argument for %s on line: %d\n", tokens[0], line_number);
                 exit(EXIT_FAILURE);
             }
         }

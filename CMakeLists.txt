@@ -4,6 +4,15 @@ project(slip)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+add_compile_options(-g)
+
+option(SANITIZE "Enable ASAN/UBSAN" ON)
+
+if(SANITIZE)
+    target_compile_options(slip_lib PRIVATE -fsanitize=address,undefined)
+    target_link_options(slip_lib PRIVATE -fsanitize=address,undefined)
+endif()
+
 option(WARNINGS "Enable all compiler warnings" ON)
 
 if(WARNINGS)
@@ -13,7 +22,6 @@ if(WARNINGS)
 endif()
 
 set(SOURCES
-    src/slip.c
     src/stack.c
     src/unified_io.c
     src/instructions.c
@@ -21,7 +29,11 @@ set(SOURCES
     src/parser.c
 )
 
-add_executable(slip ${SOURCES})
+add_library(slip_lib STATIC ${SOURCES})
+target_include_directories(slip_lib PUBLIC src)
+
+add_executable(slip src/slip.c)
+target_link_libraries(slip PRIVATE slip_lib)
 
 #==================================================
 #=                  Testing                       =
