@@ -45,5 +45,5 @@ make
 - [ ] Parse program from file
 - [x] Dynamic program expansion for `INT`
 - [x] Unified I/O system (shared buffer for READ/WRITE)
-- [ ] Better error handling
-- [ ] Example programs gallery
+- [x] Better error handling
+- [x] Example programs gallery
