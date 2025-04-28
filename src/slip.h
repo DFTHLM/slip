@@ -10,3 +10,7 @@
 
 int8_t execute_instruction(Instruction *inst, int line);
 
+//enable ansi in windows
+#ifdef _WIN32
+#include <windows.h>
+#endif

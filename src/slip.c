@@ -5,6 +5,19 @@ IOBuffer io_buffer;
 Instruction* program;
 int program_size;
 
+void enable_virtual_terminal_processing() {
+#ifdef _WIN32
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (hOut == INVALID_HANDLE_VALUE) return;
+
+    DWORD dwMode = 0;
+    if (!GetConsoleMode(hOut, &dwMode)) return;
+
+    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    SetConsoleMode(hOut, dwMode);
+#endif
+}
+
 int8_t execute_instruction(Instruction *inst, int line) 
 {
     char *error = NULL;
@@ -82,13 +95,18 @@ int8_t execute_instruction(Instruction *inst, int line)
 
 int main(int argc, char *argv[]) 
 {
+    // Enable ANSI escape codes for Windows
+#ifdef _WIN32
+    enable_virtual_terminal_processing();
+#endif
+
     int debug = 0;
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <program.slip>\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
-    if (argc == 3 && (strcmp(argv[2], "--debug") == 0 | strcmp(argv[2], "-d") == 0)) {
+    if (argc == 3 && ((strcmp(argv[2], "--debug") == 0) | (strcmp(argv[2], "-d") == 0))) {
         debug = 1;
     }
 
