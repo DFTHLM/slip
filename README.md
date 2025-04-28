@@ -17,7 +17,7 @@ SLIP is a stack based esolang with a self-modifying instruction set. The languag
 | `OP_POP`  | 6     | Destroys the top of the stack                |
 | `OP_PUSH` | 7     | Pushes argument (only instruction with args) |
 
-### Example: Infinite 'A' Printer
+### Example: Infinite (until overflow) 'A' Printer
 
 ```
 NOP       ; [0] No-op (wastes a cycle)
@@ -28,7 +28,6 @@ WRITE     ; [4] Print
 POP       ; [5] Discard the top of the stack (it will overflow sooner than the I/O buffer)
 INT       ; [5] Overwrites the line 6 lines above with NOP, jumps there
 ```
-Currently, to make a program you need to edit the *program* variable in slip.c - array of Instruction {count, OpCode, arg} - and recompile
 
 ## Compilation:
 Compile using CMake:
@@ -37,12 +36,13 @@ git clone https://github.com/DFTHLM/slip.git
 mkdir build && cd build/
 CMake ..
 make
+./slip <path_to_program.slip>
 # to test: make test
 ```
 
 ## Roadmap
 - [ ] Unit tests (partially done so far)
-- [ ] Parse program from file
+- [x] Parse program from file
 - [x] Dynamic program expansion for `INT`
 - [x] Unified I/O system (shared buffer for READ/WRITE)
 - [x] Better error handling
