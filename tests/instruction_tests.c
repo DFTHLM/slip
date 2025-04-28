@@ -96,6 +96,21 @@ void test_read(void) {
     TEST_ASSERT_EQUAL(1, stack.arr[0]);
 }
 
+void test_int(void) {
+    stack.arr[0] = 2;
+    stack.arr[1] = 0;
+    Instruction program[] = {
+        {1, OP_INT, 0},
+    };
+
+    Instruction *pc = program;
+
+    op_int(&error, &stack, &program[0], &pc, 0, 1);
+
+    TEST_ASSERT_EQUAL(0, pc[0].op);
+    TEST_ASSERT_EQUAL(1, pc[1].count);
+}
+
 int main(void) {
     UNITY_BEGIN();
     RUN_TEST(test_push);
