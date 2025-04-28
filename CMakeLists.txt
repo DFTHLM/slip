@@ -18,6 +18,7 @@ set(SOURCES
     src/unified_io.c
     src/instructions.c
     src/error_handling.c
+    src/parser.c
 )
 
 add_executable(slip ${SOURCES})
