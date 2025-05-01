@@ -17,10 +17,8 @@ SLIP is a stack based esolang with a self-modifying instruction set. The languag
 | `OP_POP`  | 6     | Destroys the top of the stack                                                        |
 | `OP_PUSH` | 7     | Pushes argument (only instruction with arguments, wiriting it using INT adds PUSH 0) |
 | `OP_SWAP` | 8     | Swaps the 2 highest elements of the stack                                            |
-| `OP_PRINT`| 9     | Peeks at the top of stack and prints the value as an integer                         |
 
-PRINT, WRITE and READ all operate on the same I/O buffer, meaning READ can read values written by WRITE/PRINT and vice-versa.
-PRINT and WRITE are the same, but PRINT will print the value as an integer, while WRITE will print the value as an ASCII character, both are non-destructive.
+WRITE and READ all operate on the same I/O buffer, meaning READ can read values written by WRITE and vice-versa.
 READ is destructive, meaning it will pop the value from the buffer, and if its empty it will wait for user input.
 INT only jumps if the current top of stack is a valid instruction, otherwise it will act as a NOP.
 

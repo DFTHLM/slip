@@ -18,7 +18,6 @@ typedef enum {
     OP_POP,
     OP_PUSH,
     OP_SWAP,
-    OP_PRINT,
     COUNT
 } OpCode;
 
