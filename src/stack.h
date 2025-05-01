@@ -9,6 +9,7 @@
 typedef struct {
     int16_t* arr;
     int top;
+    int size;
 } Stack;
 
 void init(Stack *stack, int size);

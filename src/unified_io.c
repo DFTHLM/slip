@@ -9,6 +9,10 @@ void print_io_buffer(char **error, IOBuffer *io_buffer) {
     }
 
     for (int i = 0; i <= io_buffer->top; i++) {
+        if (io_buffer->arr[i] < 0) {
+            *error = strdup("Invalid character in IOBuffer");
+            return;
+        }
         printf("%c", io_buffer->arr[i]);
     }
 }

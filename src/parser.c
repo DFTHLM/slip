@@ -37,6 +37,7 @@ int parse_opcode(const char *str) {
     if (strcmp(str, "POP") == 0) return OP_POP;
     if (strcmp(str, "PUSH") == 0) return OP_PUSH;
     if (strcmp(str, "SWAP") == 0) return OP_SWAP;
+    if (strcmp(str, "PRINT") == 0) return OP_PRINT;
 
     return -1; // Invalid opcode
 }

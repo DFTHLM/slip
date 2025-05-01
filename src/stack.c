@@ -3,6 +3,7 @@
 void init(Stack *stack, int size) {
     stack->arr = (int16_t *)malloc(size * sizeof(int16_t));
     stack->top = -1;
+    stack->size = size;
 }
 
 int8_t is_empty(Stack *stack) {
@@ -10,7 +11,7 @@ int8_t is_empty(Stack *stack) {
 }
 
 int8_t is_full(Stack *stack) {
-    return stack->top == 255;
+    return stack->top == stack->size - 1;
 }
 
 void push(char **error, Stack *stack, int16_t value) {
@@ -19,7 +20,7 @@ void push(char **error, Stack *stack, int16_t value) {
         return;
     }
 
-    if (value < -256 || value > 256) {
+    if (value < -256 || value > 255) {
         *error = strdup("Value out of range");
         return;
     }

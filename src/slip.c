@@ -29,7 +29,7 @@ int8_t execute_instruction(Instruction *inst, int line)
 
         case OP_ADD:
             result = op_add(&error, &stack, line);
-            if (error) {
+            if (error || result == -1) {
                 fatal_error(&error, program, &stack, line, program_size);
                 return -1;
             }
@@ -37,7 +37,7 @@ int8_t execute_instruction(Instruction *inst, int line)
 
         case OP_SUB:
             result = op_sub(&error, &stack, line);
-            if (error) {
+            if (error || result == -1) {
                 fatal_error(&error, program, &stack, line, program_size);
                 return -1;
             }
@@ -45,7 +45,7 @@ int8_t execute_instruction(Instruction *inst, int line)
 
         case OP_READ:
             result = op_read(&error, &stack, &io_buffer, line);
-            if (error) {
+            if (error || result == -1) {
                 fatal_error(&error, program, &stack, line, program_size);
                 return -1;
             }
@@ -53,7 +53,7 @@ int8_t execute_instruction(Instruction *inst, int line)
 
         case OP_WRITE:
             result = op_write(&error, &stack, &io_buffer, line);
-            if (error) {
+            if (error || result == -1) {
                 fatal_error(&error, program, &stack, line, program_size);
                 return -1;
             }
@@ -61,7 +61,7 @@ int8_t execute_instruction(Instruction *inst, int line)
 
         case OP_INT:
             result = op_int(&error, &stack, &program, &program_size, line);
-            if (error) {
+            if (error || result == -1) {
                 fatal_error(&error, program, &stack, line, program_size);
                 return -1;
             }
@@ -69,7 +69,7 @@ int8_t execute_instruction(Instruction *inst, int line)
 
         case OP_POP:
             result = op_pop(&error, &stack, line);
-            if (error) {
+            if (error || result == -1) {
                 fatal_error(&error, program, &stack, line, program_size);
                 return -1;
             }
@@ -85,7 +85,7 @@ int8_t execute_instruction(Instruction *inst, int line)
 
         case OP_SWAP:
             result = op_swap(&error, &stack, line);
-            if (error) {
+            if (error || result == -1) {
                 fatal_error(&error, program, &stack, line, program_size);
                 return -1;
             }
@@ -121,8 +121,8 @@ int main(int argc, char *argv[])
     // Hide the cursor
     printf("\e[?25l");
 
-    init(&stack, 256);
-    init(&io_buffer, 1024);
+    init(&stack, 2048);
+    init(&io_buffer, 2048);
 
     int line = 0;
     program = parse(argv[1], &program_size);

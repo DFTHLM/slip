@@ -18,6 +18,7 @@ typedef enum {
     OP_POP,
     OP_PUSH,
     OP_SWAP,
+    OP_PRINT,
     COUNT
 } OpCode;
 
@@ -35,5 +36,6 @@ int op_int(char **error, Stack *stack, Instruction **pc, int *program_size, int 
 int op_pop(char **error, Stack *stack, int line);
 int op_push(char **error, Instruction *inst, Stack *stack, int line);
 int op_swap(char **error, Stack *stack, int line);
+int op_print(char **error, Stack *stack, IOBuffer *buffer, int line);
 
 #endif // INSTRUCTIONS_H
