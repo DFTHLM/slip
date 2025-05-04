@@ -11,12 +11,14 @@ static const char* OPCODE_NAMES[] = {
     "SUB",
     "READ",
     "WRITE",
-    "INT",
     "POP",
-    "PUSH"
+    "PUSH",
+    "SWAP",
+    "INT",
 };
 
 void fatal_error(char **message, Instruction *pc, Stack *stack, int line, int program_size);
+void print_program(Instruction *pc, int line, int program_size);
 
 #endif // ERROR_HANDLING_H
 

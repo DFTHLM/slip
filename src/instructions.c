@@ -102,7 +102,9 @@ int op_int(char **error, Stack *stack, Instruction **pc, int *program_size, int 
         (*pc)[target_line].arg = 0;
 
     } else {
-        int new_size = *program_size + 2;
+        printf("Target line: %d\n", target_line);
+        int new_size = target_line < 0 ? abs(target_line) + *program_size : target_line + 1;
+        printf("New size: %d\n", new_size);
         
         if (*program_size > INT_MAX - 2) {
             *error = strdup("Program size exceeded maximum limit");
@@ -120,19 +122,26 @@ int op_int(char **error, Stack *stack, Instruction **pc, int *program_size, int 
         *program_size = new_size;  // update size
 
         if (target_line < 0) {
-            memmove((*pc) + 2, (*pc), sizeof(Instruction) * *program_size);
+            memmove((*pc) + abs(target_line), (*pc), sizeof(Instruction) * old_size);
             (*pc)[0].op = x;
             (*pc)[0].arg = 0;
-            (*pc)[1].op = OP_NOP;
-            (*pc)[1].arg = 0;
+            for (int i = 0; i <= line; i++) {
+                printf("changing %d\n", i);
+                if ((*pc)[i].op) {
+                    (*pc)[i].op = OP_NOP;
+                    (*pc)[i].arg = 0;
+                }
+            }
             line = 0;
 
         } else {
-            (*pc)[old_size].op = x;
-            (*pc)[old_size].arg = 0;
-            (*pc)[old_size - 1].op = OP_NOP;
-            (*pc)[old_size - 1].arg = 0;
-            line = old_size;
+            for (int i = old_size; i < new_size; i++) {
+                (*pc)[i].op = OP_NOP;
+                (*pc)[i].arg = 0;
+            }
+            (*pc)[target_line].op = x;
+            (*pc)[target_line].arg = 0;
+            line = target_line;
         }
 
         *program_size = new_size;

@@ -160,6 +160,9 @@ int main(int argc, char *argv[])
         printf("\n");
         char *error = NULL;
         print_io_buffer(&error, &io_buffer);
+        printf("\n");
+        printf("Program contents:\n");
+        print_program(program, 0, program_size);
     }
 
     printf("\n\e[?25h");
